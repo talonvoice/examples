@@ -220,6 +220,4 @@ keymap.update({
 
     'next space': Key('cmd-alt-ctrl-right'),
     'last space': Key('cmd-alt-ctrl-left'),
-
-    'click': lambda x: ctrl.mouse_click(),
 })
