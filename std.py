@@ -1,4 +1,5 @@
 from talon.voice import Word, Context, Key, Rep, Str, press
+from talon import ctrl
 import string
 
 alpha_alt = 'air bat cap die each fail gone harm sit jury crash look mad near odd pit quest red sun trap urge vest whale box yes zip'.split()
@@ -219,4 +220,6 @@ keymap.update({
 
     'next space': Key('cmd-alt-ctrl-right'),
     'last space': Key('cmd-alt-ctrl-left'),
+
+    'click': lambda x: ctrl.mouse_click(),
 })
