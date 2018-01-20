@@ -17,24 +17,20 @@ tap.register(tap.MMOVE, on_move)
 
 def click_pos(m):
     word = m._words[0]
-    start = (word.start + min((word.end - word.start) / 2, 0.05)) / 1000.0
+    start = (word.start + min((word.end - word.start) / 2, 0.100)) / 1000.0
     diff, pos = min([(abs(start - pos[2]), pos) for pos in mouse_history])
     return pos[:2]
 
 def delayed_click(m, button=0, times=1):
-    global force_move
-    with ctrl.lock:
-        try:
-            # force_move = mouse_history[-1][:2]
-            lx, ly = mouse_history[-1][:2]
-            x, y = click_pos(m)
-            ctrl.mouse(x, y)
-            for i in range(times):
-                ctrl.mouse_click(x, y, button=button, times=i+1)
-            time.sleep(0.05)
-            ctrl.mouse(lx, ly)
-        finally:
-            force_move = None
+    old = eye.config.control_mouse
+    eye.config.control_mouse = False
+    x, y = click_pos(m)
+    ctrl.mouse(x, y)
+    for i in range(times):
+        time.sleep(0.016)
+        ctrl.mouse_click(x, y, button=button, times=i+1)
+    time.sleep(0.032)
+    eye.config.control_mouse = old
 
 def delayed_right_click(m):
     delayed_click(m, button=1)
@@ -64,5 +60,7 @@ keymap = {
 ctx.keymap(keymap)
 
 def unload():
-    ctx.disable()
+    global mouse_history
+    ctx.unload()
     tap.unregister(tap.MMOVE, on_move)
+    mouse_history = []

@@ -54,12 +54,13 @@ formatters = {
     'dunder': (True,  lambda i, word, _: '__%s__' % word if i == 0 else word),
     'camel':  (True,  lambda i, word, _: word if i == 0 else word.capitalize()),
     'snake':  (True,  lambda i, word, _: word if i == 0 else '_'+word),
+    'smash':  (True,  lambda i, word, _: word),
     # spinal or kebab?
     'kebab':  (True,  lambda i, word, _: word if i == 0 else '-'+word),
     'title':  (False, lambda i, word, _: word.capitalize()),
     'allcaps': (False, lambda i, word, _: word.upper()),
-    'string': (False, surround('"')),
-    'soul string': (False, surround("'")),
+    'dub string': (False, surround('"')),
+    'string': (False, surround("'")),
     'padded': (False, surround(" ")),
     'rot thirteen':  (False, rot13),
 }
@@ -87,6 +88,7 @@ def FormatText(m):
         sep = ''
     Str(sep.join(words))(None)
 
+ctx = Context('input')
 
 keymap = {}
 keymap.update(alpha)
@@ -169,6 +171,7 @@ keymap.update({
     'tip you pent 8': 'uint8_t ',
 
     'args': ['()', Key('left')],
+    'index': ['[]', Key('left')],
     'block': [' {}', Key('left enter enter up tab')],
     'empty array': '[]',
     'empty dict': '{}',
@@ -202,7 +205,7 @@ keymap.update({
 
     'dunder in it': '__init__',
 
-    'is equal to': ' == ',
+    '[is] equal to': ' == ',
     'equals': '=',
     'arrow': '->',
     'call': '()',
@@ -220,4 +223,8 @@ keymap.update({
 
     'next space': Key('cmd-alt-ctrl-right'),
     'last space': Key('cmd-alt-ctrl-left'),
+
+    'scroll down': [Key('down')] * 30,
+    'scroll up': [Key('up')] * 30,
 })
+ctx.keymap(keymap)

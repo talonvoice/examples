@@ -1,10 +1,7 @@
 from talon.voice import Word, Context, Key, Rep, Str, press
-ctx = Context('vim')
 
-from .std import keymap
-
-keymap = keymap.copy()
-keymap.update({
+ctx = Context('vim', bundle='com.apple.Terminal', func=lambda app, win: 'vim' in win.title)
+ctx.keymap({
     'bson append doc begin': ['BSON_APPEND_DOCUMENT_BEGIN();', Key('left left')],
     'bson append doc end': ['bson_append_document_end();', Key('left left')],
     'bson append array begin': ['BSON_APPEND_ARRAY_BEGIN();', Key('left left')],
@@ -23,7 +20,12 @@ keymap.update({
     'tip eye dev': 'eye_dev *',
     'tip eye buff': 'ebuf **',
     'tip pie object': 'PyObject',
-})
-ctx.keymap(keymap)
 
-def unload(): ctx.disable()
+    'word stood in': 'stdin',
+    'word stood out': 'stdout',
+    'word stood err': 'stderr',
+    'word write': 'write',
+    'word linux': 'linux',
+})
+
+def unload(): ctx.unload()

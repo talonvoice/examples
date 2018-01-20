@@ -1,5 +1,5 @@
 from talon.voice import Context, Key, Rep, Str, press
-ctx = Context('crawl')
+ctx = Context('crawl', bundle='com.apple.Terminal', func=lambda app, win: 'crawl' in win.title)
 
 import time
 import threading
@@ -219,4 +219,4 @@ keymap.update({
 
 ctx.keymap(keymap)
 
-def unload(): ctx.disable()
+def unload(): ctx.unload()
