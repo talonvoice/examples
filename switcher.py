@@ -8,7 +8,7 @@ def switch_app(m):
     full = apps.get(name)
     if not full: return
     for app in ui.apps():
-        if app.name == name:
+        if app.name == full:
             app.focus()
             break
 
@@ -20,12 +20,17 @@ ctx.keymap(keymap)
 
 def update_lists():
     global apps
-    apps = {}
+    new = {}
     for app in ui.apps():
-        for word in app.name.split(' '):
-            if not word in apps:
-                apps[word] = app.name
-    ctx.set_list('apps', apps.values())
+        words = app.name.split(' ')
+        for word in words:
+            if word and not word in new:
+                new[word] = app.name
+        new[app.name] = app.name
+    if set(new.keys()) == set(apps.keys()):
+        return
+    ctx.set_list('apps', new.keys())
+    apps = new
 
 def ui_event(event, arg):
     if event in ('app_activate', 'app_deactivate', 'app_launch', 'app_close'):
