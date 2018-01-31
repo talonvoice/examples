@@ -218,5 +218,3 @@ keymap.update({
 '''
 
 ctx.keymap(keymap)
-
-def unload(): ctx.unload()

@@ -27,5 +27,3 @@ ctx.keymap({
     'word write': 'write',
     'word linux': 'linux',
 })
-
-def unload(): ctx.unload()

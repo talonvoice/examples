@@ -6,5 +6,3 @@ def on_status(topic, j):
         engine.mimic('go to sleep')
 
 engine.register('status', on_status)
-
-def unload(): engine.unregister('status', on_status)

@@ -8,5 +8,3 @@ ctx.keymap({
     'camera overlay':  lambda m: eye.on_menu('Eye Tracking >> Show Camera Overlay'),
     'run calibration': lambda m: eye.on_menu('Eye Tracking >> Calibrate'),
 })
-
-def unload(): ctx.unload()

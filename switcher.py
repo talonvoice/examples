@@ -22,6 +22,8 @@ def update_lists():
     global apps
     new = {}
     for app in ui.apps():
+        if not app.windows():
+            continue
         words = app.name.split(' ')
         for word in words:
             if word and not word in new:
@@ -33,12 +35,8 @@ def update_lists():
     apps = new
 
 def ui_event(event, arg):
-    if event in ('app_activate', 'app_deactivate', 'app_launch', 'app_close'):
+    if event in ('app_activate', 'app_launch', 'app_close', 'win_open', 'win_close'):
         update_lists()
 
 ui.register('', ui_event)
 update_lists()
-
-def unload():
-    ctx.unload()
-    ui.unregister('', update_lists)

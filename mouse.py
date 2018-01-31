@@ -8,7 +8,7 @@ x, y = ctrl.mouse_pos()
 mouse_history = [(x, y, time.time())]
 force_move = None
 
-def on_move(_, e):
+def on_move(typ, e):
     mouse_history.append((e.x, e.y, time.time()))
     if force_move:
         e.x, e.y = force_move
@@ -58,9 +58,3 @@ keymap = {
     'release': mouse_release,
 }
 ctx.keymap(keymap)
-
-def unload():
-    global mouse_history
-    ctx.unload()
-    tap.unregister(tap.MMOVE, on_move)
-    mouse_history = []
