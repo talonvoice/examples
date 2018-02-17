@@ -1,5 +1,6 @@
 from talon.voice import Word, Context, Key, Rep, Str, press
 from talon import ctrl
+from talon_init import TALON_HOME, TALON_PLUGINS, TALON_USER
 import string
 
 alpha_alt = 'air bat cap die each fail gone harm sit jury crash look mad near odd pit quest red sun trap urge vest whale box yes zip'.split()
@@ -16,8 +17,8 @@ alpha.update({'alt %s' % k: Key('alt-%s' % v) for k, v in alnum})
 
 mapping = {
     'semicolon': ';',
-    r'new-line': '\n',
-    r'new-paragraph': '\n\n',
+    'new-line': '\n',
+    'new-paragraph': '\n\n',
 }
 
 def parse_word(word):
@@ -57,6 +58,7 @@ formatters = {
     'smash':  (True,  lambda i, word, _: word),
     # spinal or kebab?
     'kebab':  (True,  lambda i, word, _: word if i == 0 else '-'+word),
+    'sentence':  (False, lambda i, word, _: word.capitalize() if i == 0 else word),
     'title':  (False, lambda i, word, _: word.capitalize()),
     'allcaps': (False, lambda i, word, _: word.upper()),
     'dub string': (False, surround('"')),
@@ -94,7 +96,7 @@ keymap = {}
 keymap.update(alpha)
 keymap.update({
     'phrase <dgndictation> [over]': text,
-    'word <dgnwords>': word,
+    # 'word <dgnwords>': word,
     '(%s)+ <dgndictation>' % (' | '.join(formatters)): FormatText,
 
     'tab':   Key('tab'),
@@ -109,8 +111,6 @@ keymap.update({
     'enter': Key('enter'),
     'escape': Key('esc'),
     'question [mark]': '?',
-    '(minus | dash)': '-',
-    'plus': '+',
     'tilde': '~',
     '(bang | exclamation point)': '!',
     'dollar [sign]': '$',
@@ -134,13 +134,17 @@ keymap.update({
     'quote': "'",
     'triple quote': "'''",
     '(dot | period)': '.',
-    'comma': ', ',
+    'comma': ',',
     'space': ' ',
     '[forward] slash': '/',
     'backslash': '\\',
 
     '(dot dot | dotdot)': '..',
     'cd': 'cd ',
+    'cd talon home': 'cd {}'.format(TALON_HOME),
+    'cd talon user': 'cd {}'.format(TALON_USER),
+    'cd talon plugins': 'cd {}'.format(TALON_PLUGINS),
+
     'run make (durr | dear)': 'mkdir ',
     'run git': 'git ',
     'run git clone': 'git clone ',
@@ -162,13 +166,14 @@ keymap.update({
     'tip char': 'char ',
     'tip byte': 'byte ',
     'tip pent 64': 'int64_t ',
-    'tip you pent 64': 'uint64_t ',
+    'tip you went 64': 'uint64_t ',
     'tip pent 32': 'int32_t ',
-    'tip you pent 32': 'uint32_t ',
+    'tip you went 32': 'uint32_t ',
     'tip pent 16': 'int16_t ',
-    'tip you pent 16': 'uint16_t ',
+    'tip you went 16': 'uint16_t ',
     'tip pent 8': 'int8_t ',
-    'tip you pent 8': 'uint8_t ',
+    'tip you went 8': 'uint8_t ',
+    'tip size': 'size_t',
 
     'args': ['()', Key('left')],
     'index': ['[]', Key('left')],
@@ -176,7 +181,7 @@ keymap.update({
     'empty array': '[]',
     'empty dict': '{}',
 
-    'state deaf': 'def ', 
+    'state (def | deaf | deft)': 'def ',
     'state else if': 'elif ',
     'state if': 'if ',
     'state else if': [' else if ()', Key('left')],
@@ -187,6 +192,7 @@ keymap.update({
     'state case': ['case \nbreak;', Key('up')],
     'state goto': 'goto ',
     'state import': 'import ',
+    'state class': 'class ',
 
     'comment see': '// ',
     'comment py': '# ',
@@ -200,17 +206,55 @@ keymap.update({
     'word dup': 'dup',
     'word streak': ['streq()', Key('left')],
     'word printf': 'printf',
+    'word (dickt | dictionary)': 'dict',
 
     'word lunixbochs': 'lunixbochs',
 
     'dunder in it': '__init__',
+    'self taught': 'self.',
+    'dickt in it': ['{}', Key('left')],
+    'list in it': ['[]', Key('left')],
+    'string utf8': "'utf8'",
+    'state past': 'pass',
 
-    '[is] equal to': ' == ',
     'equals': '=',
+    '(minus | dash)': '-',
+    'plus': '+',
     'arrow': '->',
     'call': '()',
     'indirect': '&',
     'dereference': '*',
+    '(op equals | assign)': ' = ',
+    'op (minus | subtract)': ' - ',
+    'op (plus | add)': ' + ',
+    'op (times | multiply)': ' * ',
+    'op divide': ' / ',
+    'op mod': ' % ',
+    '[op] (minus | subtract) equals': ' -= ',
+    '[op] (plus | add) equals': ' += ',
+    '[op] (times | multiply) equals': ' *= ',
+    '[op] divide equals': ' /= ',
+    '[op] mod equals': ' %= ',
+
+    '(op | is) greater [than]': ' > ',
+    '(op | is) less [than]': ' < ',
+    '(op | is) equal to': ' == ',
+    '(op | is) not equal to': ' != ',
+    '(op | is) greater or equal to': ' >= ',
+    '(op | is) less or equal to': ' <= ',
+    '(op (power | exponent) | to the power [of])': ' ** ',
+    'op and': ' && ',
+    'op or': ' || ',
+    '(op | logical | bitwise) and': ' & ',
+    '(op | logical | bitwise) or': ' | ',
+    '(op | logical | bitwise) ex or': ' ^ ',
+    '[(op | logical | bitwise)] (left shift | shift left)': ' << ',
+    '[(op | logical | bitwise)] (right shift | shift right)': ' >> ',
+    '(op | logical | bitwise) and equals': ' &= ',
+    '(op | logical | bitwise) or equals': ' |= ',
+    '(op | logical | bitwise) ex or equals': ' ^= ',
+    '[(op | logical | bitwise)] (left shift | shift left) equals': ' <<= ',
+    '[(op | logical | bitwise)] (right shift | shift right) equals': ' >>= ',
 
     'new window': Key('cmd-n'),
     'next window': Key('cmd-`'),
