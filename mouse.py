@@ -26,9 +26,7 @@ def delayed_click(m, button=0, times=1):
     eye.config.control_mouse = False
     x, y = click_pos(m)
     ctrl.mouse(x, y)
-    for i in range(times):
-        time.sleep(0.016)
-        ctrl.mouse_click(x, y, button=button, times=i+1)
+    ctrl.mouse_click(x, y, button=button, times=times, wait=16000)
     time.sleep(0.032)
     eye.config.control_mouse = old
 
