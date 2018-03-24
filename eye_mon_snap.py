@@ -1,5 +1,5 @@
 from talon import ctrl, tap, ui, eye
-from eye import tracker
+from eye import tracker, mouse
 from talon.track.geom import Point2d, Point3d, EyeFrame
 
 main = ui.main_screen()
@@ -34,6 +34,7 @@ class MonSnap:
 
     def restore(self):
         if self.saved_mouse:
+            mouse.last_ctrl = self.saved_mouse
             ctrl.mouse(self.saved_mouse.x, self.saved_mouse.y)
             self.saved_mouse = None
             self.main_gaze = False
