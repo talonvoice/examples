@@ -1,5 +1,5 @@
 from talon import ctrl, tap, ui, eye
-from eye import tracker, mouse
+from eye_mouse import tracker, mouse
 from talon.track.geom import Point2d, Point3d, EyeFrame
 
 main = ui.main_screen()
