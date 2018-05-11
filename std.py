@@ -1,4 +1,4 @@
-from talon.voice import Word, Context, Key, Rep, Str, press
+from talon.voice import Word, Context, Key, Rep, RepPhrase, Str, press
 from talon import ctrl
 from talon_init import TALON_HOME, TALON_PLUGINS, TALON_USER
 import string
@@ -20,21 +20,37 @@ mapping = {
     'new-line': '\n',
     'new-paragraph': '\n\n',
 }
+punctuation = set('.,-!?')
 
 def parse_word(word):
-    word = word.lstrip('\\').split('\\', 1)[0]
+    word = str(word).lstrip('\\').split('\\', 1)[0]
     word = mapping.get(word, word)
     return word
 
+def join_words(words, sep=' '):
+    out = ''
+    for i, word in enumerate(words):
+        if i > 0 and word not in punctuation:
+            out += sep
+        out += word
+    return out
+
+def parse_words(m):
+    return list(map(parse_word, m.dgndictation[0]._words))
+
+def insert(s):
+    Str(s)(None)
+
 def text(m):
-    tmp = [str(s).lower() for s in m.dgndictation[0]._words]
-    words = [parse_word(word) for word in tmp]
-    Str(' '.join(words))(None)
+    insert(join_words(parse_words(m)).lower())
+
+def sentence_text(m):
+    text = join_words(parse_words(m)).lower()
+    insert(text.capitalize())
 
 def word(m):
-    tmp = [str(s).lower() for s in m.dgnwords[0]._words]
-    words = [parse_word(word) for word in tmp]
-    Str(' '.join(words))(None)
+    text = join_words(list(map(parse_word, m.dgnwords[0]._words)))
+    insert(text.lower())
 
 def surround(by):
     def func(i, word, last):
@@ -58,10 +74,9 @@ formatters = {
     'smash':  (True,  lambda i, word, _: word),
     # spinal or kebab?
     'kebab':  (True,  lambda i, word, _: word if i == 0 else '-'+word),
-    'sentence':  (False, lambda i, word, _: word.capitalize() if i == 0 else word),
     'title':  (False, lambda i, word, _: word.capitalize()),
     'allcaps': (False, lambda i, word, _: word.upper()),
-    'dub string': (False, surround('"')),
+    'dubstring': (False, surround('"')),
     'string': (False, surround("'")),
     'padded': (False, surround(" ")),
     'rot thirteen':  (False, rot13),
@@ -72,7 +87,7 @@ def FormatText(m):
     for w in m._words:
         if isinstance(w, Word):
             fmt.append(w.word)
-    words = [str(s).lower() for s in m.dgndictation[0]._words]
+    words = parse_words(m)
 
     tmp = []
     spaces = True
@@ -96,7 +111,13 @@ keymap = {}
 keymap.update(alpha)
 keymap.update({
     'phrase <dgndictation> [over]': text,
-    # 'word <dgnwords>': word,
+    'word <dgnwords>': word,
+
+    'sentence <dgndictation> [over]': sentence_text,
+    'comma <dgndictation> [over]': [', ', text],
+    'period <dgndictation> [over]': ['. ', sentence_text],
+    'more <dgndictation> [over]': [' ', text],
+
     '(%s)+ <dgndictation>' % (' | '.join(formatters)): FormatText,
 
     'tab':   Key('tab'),
@@ -146,16 +167,30 @@ keymap.update({
     'cd talon plugins': 'cd {}'.format(TALON_PLUGINS),
 
     'run make (durr | dear)': 'mkdir ',
-    'run git': 'git ',
-    'run git clone': 'git clone ',
-    'run git diff': 'git diff ',
-    'run git commit': 'git commit ',
-    'run git push': 'git push ',
-    'run git pull': 'git pull ',
-    'run git status': 'git status ',
-    'run git add': 'git add ',
+    'run get': 'git ',
+    'run get (R M | remove)': 'git rm ',
+    'run get add': 'git add ',
+    'run get bisect': 'git bisect ',
+    'run get branch': 'git branch ',
+    'run get checkout': 'git checkout ',
+    'run get clone': 'git clone ',
+    'run get commit': 'git commit ',
+    'run get diff': 'git diff ',
+    'run get fetch': 'git fetch ',
+    'run get grep': 'git grep ',
+    'run get in it': 'git init ',
+    'run get log': 'git log ',
+    'run get merge': 'git merge ',
+    'run get move': 'git mv ',
+    'run get pull': 'git pull ',
+    'run get push': 'git push ',
+    'run get rebase': 'git rebase ',
+    'run get reset': 'git reset ',
+    'run get show': 'git show ',
+    'run get status': 'git status ',
+    'run get tag': 'git tag ',
     'run (them | vim)': 'vim ',
-    'run ellis': 'ls\n',
+    'run L S': 'ls\n',
     'dot pie': '.py',
     'run make': 'make\n',
     'run jobs': 'jobs\n',
@@ -174,6 +209,8 @@ keymap.update({
     'tip pent 8': 'int8_t ',
     'tip you went 8': 'uint8_t ',
     'tip size': 'size_t',
+    'tip float': 'float ',
+    'tip double': 'double ',
 
     'args': ['()', Key('left')],
     'index': ['[]', Key('left')],
@@ -194,6 +231,12 @@ keymap.update({
     'state import': 'import ',
     'state class': 'class ',
 
+    'state include': '#include ',
+    'state include system': ['#include <>', Key('left')],
+    'state include local': ['#include ""', Key('left')],
+    'state type deaf': 'typedef ',
+    'state type deaf struct': ['typedef struct {\n\n};', Key('up'), '\t'],
+
     'comment see': '// ',
     'comment py': '# ',
 
@@ -207,8 +250,14 @@ keymap.update({
     'word streak': ['streq()', Key('left')],
     'word printf': 'printf',
     'word (dickt | dictionary)': 'dict',
+    'word shell': 'shell',
 
     'word lunixbochs': 'lunixbochs',
+    'word talon': 'talon',
+    'word Point2d': 'Point2d',
+    'word Point3d': 'Point3d',
+    'title Point': 'Point',
+    'word angle': 'angle',
 
     'dunder in it': '__init__',
     'self taught': 'self.',
@@ -238,10 +287,10 @@ keymap.update({
 
     '(op | is) greater [than]': ' > ',
     '(op | is) less [than]': ' < ',
-    '(op | is) equal to': ' == ',
-    '(op | is) not equal to': ' != ',
-    '(op | is) greater or equal to': ' >= ',
-    '(op | is) less or equal to': ' <= ',
+    '(op | is) equal': ' == ',
+    '(op | is) not equal': ' != ',
+    '(op | is) greater [than] or equal': ' >= ',
+    '(op | is) less [than] or equal': ' <= ',
     '(op (power | exponent) | to the power [of])': ' ** ',
     'op and': ' && ',
     'op or': ' || ',
@@ -255,6 +304,8 @@ keymap.update({
     '(op | logical | bitwise) (ex | exclusive) or equals': ' ^= ',
     '[(op | logical | bitwise)] (left shift | shift left) equals': ' <<= ',
     '[(op | logical | bitwise)] (right shift | shift right) equals': ' >>= ',
+
+    'shebang bash': '#!/bin/bash -u\n',
 
     'new window': Key('cmd-n'),
     'next window': Key('cmd-`'),
