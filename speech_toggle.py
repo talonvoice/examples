@@ -6,11 +6,9 @@ def set_enabled(enable):
     if enable:
         talon.enable()
         app.icon_color(0, 0.7, 0, 1)
-        app.notify('Speech on')
     else:
         talon.disable()
         app.icon_color(1, 0, 0, 1)
-        app.notify('Speech off')
     lib.menu_check(b'!Enable Speech Recognition', enable)
 
 def on_menu(item):
