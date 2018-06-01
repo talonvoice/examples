@@ -1,5 +1,5 @@
 from talon.voice import Word, Context, Key, Rep, RepPhrase, Str, press
-from talon import ctrl
+from talon import ctrl, clip
 from talon_init import TALON_HOME, TALON_PLUGINS, TALON_USER
 import string
 
@@ -74,12 +74,13 @@ formatters = {
     'smash':  (True,  lambda i, word, _: word),
     # spinal or kebab?
     'kebab':  (True,  lambda i, word, _: word if i == 0 else '-'+word),
+    # 'sentence':  (False, lambda i, word, _: word.capitalize() if i == 0 else word),
     'title':  (False, lambda i, word, _: word.capitalize()),
     'allcaps': (False, lambda i, word, _: word.upper()),
     'dubstring': (False, surround('"')),
     'string': (False, surround("'")),
     'padded': (False, surround(" ")),
-    'rot thirteen':  (False, rot13),
+    'rot-thirteen':  (False, rot13),
 }
 
 def FormatText(m):
@@ -87,7 +88,14 @@ def FormatText(m):
     for w in m._words:
         if isinstance(w, Word):
             fmt.append(w.word)
-    words = parse_words(m)
+    try:
+        words = parse_words(m)
+    except AttributeError:
+        with clip.capture() as s:
+            press('cmd-c')
+        words = s.get().split(' ')
+        if not words:
+            return
 
     tmp = []
     spaces = True
@@ -111,14 +119,14 @@ keymap = {}
 keymap.update(alpha)
 keymap.update({
     'phrase <dgndictation> [over]': text,
-    'word <dgnwords>': word,
 
     'sentence <dgndictation> [over]': sentence_text,
     'comma <dgndictation> [over]': [', ', text],
     'period <dgndictation> [over]': ['. ', sentence_text],
     'more <dgndictation> [over]': [' ', text],
+    'word <dgnwords>': word,
 
-    '(%s)+ <dgndictation>' % (' | '.join(formatters)): FormatText,
+    '(%s)+ [<dgndictation>]' % (' | '.join(formatters)): FormatText,
 
     'tab':   Key('tab'),
     'left':  Key('left'),
