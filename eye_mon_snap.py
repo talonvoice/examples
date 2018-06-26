@@ -11,16 +11,14 @@ def is_on_main(p):
 class MonSnap:
     def __init__(self):
         tap.register(tap.MMOVE, self.on_move)
-        tracker.register('', self.on_stream)
+        tracker.register('gaze', self.on_gaze)
 
         self.saved_mouse = None
         self.main_mouse = False
         self.main_gaze = False
         self.restore_counter = 0
 
-    def on_stream(self, topic, b):
-        if b['cmd'] != eye.SUB_GAZE:
-            return
+    def on_gaze(self, b):
         l, r = EyeFrame(b, 'Left'), EyeFrame(b, 'Right')
         p = (l.gaze + r.gaze) / 2
         main_gaze = -0.02 < p.x < 1.02 and -0.02 < p.y < 1.02 and bool(l or r)
