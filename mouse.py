@@ -1,4 +1,4 @@
-import eye
+import eye_mouse
 import time
 from talon import ctrl, tap
 from talon.voice import Context
@@ -22,13 +22,13 @@ def click_pos(m):
     return pos[:2]
 
 def delayed_click(m, button=0, times=1):
-    old = eye.config.control_mouse
-    eye.config.control_mouse = False
+    old = eye_mouse.config.control_mouse
+    eye_mouse.config.control_mouse = False
     x, y = click_pos(m)
     ctrl.mouse(x, y)
     ctrl.mouse_click(x, y, button=button, times=times, wait=16000)
     time.sleep(0.032)
-    eye.config.control_mouse = old
+    eye_mouse.config.control_mouse = old
 
 def delayed_right_click(m):
     delayed_click(m, button=1)
