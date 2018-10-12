@@ -151,7 +151,7 @@ ctx = Context('input')
 keymap = {}
 keymap.update(alpha)
 keymap.update({
-    'phrase <dgndictation> [over]': text,
+    'say <dgndictation> [over]': text,
 
     'sentence <dgndictation> [over]': sentence_text,
     'comma <dgndictation> [over]': [', ', text],
