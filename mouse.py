@@ -1,7 +1,7 @@
-import eye_mouse
 import time
 from talon import ctrl, tap
 from talon.voice import Context
+from talon_plugins import eye_mouse
 ctx = Context('mouse')
 
 x, y = ctrl.mouse_pos()
