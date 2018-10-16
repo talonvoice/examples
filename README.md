@@ -2,4 +2,4 @@ basic examples for use with Talon
 
 Usage:
 
-Copy `std.py` into `~/.talon/user`, and any of the other scripts you want to try.
+Copy `basic_keys.py` and `std.py` into `~/.talon/user`, and any of the other scripts you want to try.
