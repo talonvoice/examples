@@ -8,9 +8,12 @@ f_keys = {f'F {i}': f'f{i}' for i in range(1, 13)}
 arrows = ['left', 'right', 'up', 'down']
 simple_keys = [
     'tab', 'escape', 'enter', 'space',
-    'backspace', 'delete',
     'home', 'pageup', 'pagedown', 'end',
 ]
+alternate_keys = {
+    'delete': 'backspace',
+    'forward delete': 'delete',
+}
 symbols = {
     'back tick': '`',
     'comma': ',',
@@ -39,6 +42,7 @@ arrows = {k: k for k in arrows}
 keys = {}
 keys.update(f_keys)
 keys.update(simple_keys)
+keys.update(alternate_keys)
 keys.update(symbols)
 
 # map alnum and keys separately so engine gives priority to letter/number repeats
