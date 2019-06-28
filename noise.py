@@ -4,6 +4,7 @@ from talon import ctrl
 from talon import tap
 from talon.audio import noise
 from talon.track.geom import Point2d
+from talon_plugins import eye_zoom_mouse
 
 class NoiseModel:
     def __init__(self):
@@ -30,7 +31,7 @@ class NoiseModel:
 
     def on_noise(self, noise):
         now = time.time()
-        if noise == 'pop':
+        if noise == 'pop' and not eye_zoom_mouse.zoom_mouse.enabled:
             ctrl.mouse_click(button=0, hold=16000)
         elif noise == 'hiss_start':
             if now - self.hiss_last < 0.25:
